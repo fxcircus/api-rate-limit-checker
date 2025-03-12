@@ -1,12 +1,13 @@
 # Rate Limit Check Script
 
-This script is designed to test the rate limits of a specified API endpoint by making a large number of requests concurrently. It uses the `requests` library to send HTTP requests and the `concurrent.futures` module to manage concurrency.
+This script is designed to test the rate limits of a specified API endpoint by making a large number of requests. It uses the `requests` library to send HTTP requests.
 
 ## Features
 - Sends a specified number of requests to an API endpoint.
-- Uses a specified level of concurrency to manage request threads.
 - Authenticates using a vendor token obtained from the Frontegg API.
-- Reports on the number of completed, failed, and non-2xx responses.
+- Stops execution upon receiving a 429 (Too Many Requests) response.
+- Reports on the number of completed, failed, and non-200 responses.
+- Calculates and displays the rate limit based on the responses.
 
 ## Setup
 
@@ -16,10 +17,6 @@ This script is designed to test the rate limits of a specified API endpoint by m
    ```bash
    pip install requests python-dotenv
    ```
-
-   **Required Packages:**
-   - `requests`: For making HTTP requests.
-   - `python-dotenv`: For loading environment variables from a `.env` file.
 
 2. **Environment Variables**
 
@@ -36,4 +33,4 @@ This script is designed to test the rate limits of a specified API endpoint by m
    python3 rate_limit_check.py
    ```
 
-The script will output the results of the rate limit test, including the time taken, number of completed requests, and any failed or non-2xx responses. 
+The script will output the results of the rate limit test, including the time taken, number of completed requests, and any failed or non-200 responses. It will also stop if a 429 response is encountered, indicating that the rate limit has been reached. 
