@@ -4,19 +4,19 @@ import time
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
 load_dotenv()
 
-# Constants
 TOTAL_REQUESTS = 1010  # Total number of requests to be made
 CONCURRENCY_LEVEL = 1  # Number of concurrent threads for making requests
 CLIENT_ID = os.getenv('CLIENT_ID')  # Client ID for authentication
 SECRET = os.getenv('SECRET')  # Secret key for authentication
 BASE_URL = 'https://api.frontegg.com'  # Base URL for the API
 ENDPOINT_TO_CHECK = '/identity/resources/roles/v2'  # Specific API endpoint to check rate limits
+PRINT_STATUS_FOR_EACH_REQUEST = True  # Control printing status for each request
 
 # Function to get vendor token
 def get_vendor_token():
+    # Edit the vendor token endpoint as needed
     headers = {
         'accept': 'application/json',
         'content-type': 'application/json'
@@ -32,18 +32,12 @@ def get_vendor_token():
     print(f"Retrieved Token: {token}")  # Log the token for verification
     return token
 
-# Update AUTHORIZATION with the vendor token
 AUTHORIZATION = f'Bearer {get_vendor_token()}'
-
-# Global counters
 completed_requests = 0
 failed_requests = 0
 non_2xx_responses = 0
-
-# Print an introductory message with the current timestamp
 print(f"Starting rate limit check at {time.strftime('%Y-%m-%d %H:%M:%S')}")
 
-# Function to check rate limits on a given endpoint
 def check_rate_limits_on_endpoint():
     global completed_requests, failed_requests, non_2xx_responses
     headers = {
@@ -53,7 +47,8 @@ def check_rate_limits_on_endpoint():
     try:
         response = requests.get(url, headers=headers)
         request_number = completed_requests + 1
-        print(f"Request #{request_number:04}: {url} - Status Code: {response.status_code}")
+        if PRINT_STATUS_FOR_EACH_REQUEST:
+            print(f"Request #{request_number:04}: {url} - Status Code: {response.status_code}")
         if response.status_code != 200:
             non_2xx_responses += 1
         completed_requests += 1
@@ -61,9 +56,9 @@ def check_rate_limits_on_endpoint():
             print(f'Completed {completed_requests} requests')
     except Exception as e:
         failed_requests += 1
-        print(f"Request #{completed_requests + 1:04}: {url} - Failed with exception: {e}")
+        if PRINT_STATUS_FOR_EACH_REQUEST:
+            print(f"Request #{completed_requests + 1:04}: {url} - Failed with exception: {e}")
 
-# Print an outro message for clarity
 def main():
     start_time = time.time()
     with concurrent.futures.ThreadPoolExecutor(max_workers=CONCURRENCY_LEVEL) as executor:
