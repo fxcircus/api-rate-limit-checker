@@ -11,7 +11,7 @@ CONCURRENCY_LEVEL = 1  # Number of concurrent threads for making requests
 CLIENT_ID = os.getenv('CLIENT_ID')  # Client ID for authentication
 SECRET = os.getenv('SECRET')  # Secret key for authentication
 BASE_URL = 'https://api.frontegg.com'  # Base URL for the API
-ENDPOINT_TO_CHECK = '/identity/resources/roles/v2'  # Specific API endpoint to check rate limits
+ENDPOINT_TO_CHECK = '/identity/resources/users/v2'  # Specific API endpoint to check rate limits
 PRINT_STATUS_FOR_EACH_REQUEST = True  # Control printing status for each request
 
 # Function to get vendor token
