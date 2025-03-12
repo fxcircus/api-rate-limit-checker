@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-TOTAL_REQUESTS = 1010  # Total number of requests to be made
+TOTAL_REQUESTS = 1001  # Total number of requests to be made
 CONCURRENCY_LEVEL = 1  # Number of concurrent threads for making requests
 CLIENT_ID = os.getenv('CLIENT_ID')  # Client ID for authentication
 SECRET = os.getenv('SECRET')  # Secret key for authentication
@@ -33,11 +33,13 @@ def get_vendor_token():
     return token
 
 AUTHORIZATION = f'Bearer {get_vendor_token()}'
+digit_count = len(str(TOTAL_REQUESTS)) # Calculate the number of digits needed for formatting request numbers
 completed_requests = 0
 failed_requests = 0
 non_2xx_responses = 0
 print(f"Starting rate limit check at {time.strftime('%Y-%m-%d %H:%M:%S')}")
 
+# Function to check rate limits on a given endpoint
 def check_rate_limits_on_endpoint():
     global completed_requests, failed_requests, non_2xx_responses
     headers = {
@@ -48,7 +50,7 @@ def check_rate_limits_on_endpoint():
         response = requests.get(url, headers=headers)
         request_number = completed_requests + 1
         if PRINT_STATUS_FOR_EACH_REQUEST:
-            print(f"Request #{request_number:04}: {url} - Status Code: {response.status_code}")
+            print(f"Request #{request_number:0{digit_count}}: {url} - Status Code: {response.status_code}")
         if response.status_code != 200:
             non_2xx_responses += 1
         completed_requests += 1
@@ -57,7 +59,7 @@ def check_rate_limits_on_endpoint():
     except Exception as e:
         failed_requests += 1
         if PRINT_STATUS_FOR_EACH_REQUEST:
-            print(f"Request #{completed_requests + 1:04}: {url} - Failed with exception: {e}")
+            print(f"Request #{completed_requests + 1:0{digit_count}}: {url} - Failed with exception: {e}")
 
 def main():
     start_time = time.time()
@@ -68,7 +70,7 @@ def main():
     end_time = time.time()
     elapsed_time = end_time - start_time
 
-    print("\nFinished 1000 requests")
+    print(f"\nFinished {TOTAL_REQUESTS} requests")
     print(f"Time taken for tests: {elapsed_time:.3f} seconds")
     print(f"Complete requests: {completed_requests}")
     print(f"Failed requests: {failed_requests}")
