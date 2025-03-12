@@ -17,6 +17,10 @@ This script is designed to test the rate limits of a specified API endpoint by m
    pip install requests python-dotenv
    ```
 
+   **Required Packages:**
+   - `requests`: For making HTTP requests.
+   - `python-dotenv`: For loading environment variables from a `.env` file.
+
 2. **Environment Variables**
 
    Create a `.env` file in the root directory and add your `CLIENT_ID` and `SECRET`:
